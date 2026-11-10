@@ -1,0 +1,1 @@
+Put your photos in this folder, then in admin.html open an asset and add the path, for example: images/wdm-3a.jpg
