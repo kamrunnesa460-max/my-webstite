@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#b9c4a9"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><title>Bangladesh Trainz — Railway Simulation</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<script>tailwind.config={future:{hoverOnlyWhenSupported:true},theme:{extend:{colors:{sage:'#b9c4a9',forest:'#1f3a2c',cream:'#f4f0e6',ink:'#1a1d1a'},fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}</script>
+<style>
+:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-behavior:smooth}
+body{background:#b9c4a9;font-family:Inter,system-ui,sans-serif;color:#1a1d1a;margin:0;
+background-image:radial-gradient(rgba(255,255,255,.18) 1px,transparent 1px),radial-gradient(rgba(0,0,0,.05) 1px,transparent 1px);background-size:5px 5px,7px 7px;background-position:0 0,2px 3px}
+.rise{opacity:0;transform:translateY(24px);animation:rise .9s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.reveal{opacity:0;transform:translateY(40px) scale(.98);transition:all 1s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.dash{transition:transform .6s cubic-bezier(.2,.7,.2,1),box-shadow .6s}
+@media(hover:hover){.dash:hover{transform:translateY(-6px);box-shadow:0 60px 100px -30px rgba(20,40,28,.55)}}
+.card{transition:transform .3s,box-shadow .3s}@media(hover:hover){.card:hover{transform:translateY(-2px);box-shadow:0 10px 24px -12px rgba(0,0,0,.2)}}
+.serif{font-family:'Instrument Serif',Georgia,serif}
+.draw{stroke-dasharray:600;stroke-dashoffset:600;animation:draw 2s .8s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+img,svg{max-width:100%}button,a,select,input{touch-action:manipulation}
+input,select,textarea,button{font-family:inherit}
+.tap{display:inline-flex;align-items:center;justify-content:center}
+@media(pointer:coarse){.tap{min-height:42px}}
+@media(max-width:640px){input,select,textarea{font-size:16px!important}}
+:focus-visible{outline:2px solid #1f3a2c;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-delay:0s!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.rise,.reveal{opacity:1!important;transform:none!important}.draw{stroke-dashoffset:0!important}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script id="bt-state" type="application/json">null</script>
+<script id="bt-app">
+const HEAD_HTML="<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\">\n<meta name=\"theme-color\" content=\"#b9c4a9\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"format-detection\" content=\"telephone=no\"><meta name=\"mobile-web-app-capable\" content=\"yes\"><meta name=\"apple-mobile-web-app-capable\" content=\"yes\"><meta name=\"apple-mobile-web-app-status-bar-style\" content=\"default\"><title>Bangladesh Trainz — Railway Simulation</title>\n<script src=\"https://cdn.tailwindcss.com/3.4.17\"><\/script>\n<link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif&display=swap\" rel=\"stylesheet\">\n<script>tailwind.config={future:{hoverOnlyWhenSupported:true},theme:{extend:{colors:{sage:'#b9c4a9',forest:'#1f3a2c',cream:'#f4f0e6',ink:'#1a1d1a'},fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}<\/script>\n<style>\n:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}\nhtml{scroll-behavior:smooth}\nbody{background:#b9c4a9;font-family:Inter,system-ui,sans-serif;color:#1a1d1a;margin:0;\nbackground-image:radial-gradient(rgba(255,255,255,.18) 1px,transparent 1px),radial-gradient(rgba(0,0,0,.05) 1px,transparent 1px);background-size:5px 5px,7px 7px;background-position:0 0,2px 3px}\n.rise{opacity:0;transform:translateY(24px);animation:rise .9s cubic-bezier(.2,.7,.2,1) forwards}\n@keyframes rise{to{opacity:1;transform:none}}\n.reveal{opacity:0;transform:translateY(40px) scale(.98);transition:all 1s cubic-bezier(.2,.7,.2,1)}\n.reveal.in{opacity:1;transform:none}\n.dash{transition:transform .6s cubic-bezier(.2,.7,.2,1),box-shadow .6s}\n@media(hover:hover){.dash:hover{transform:translateY(-6px);box-shadow:0 60px 100px -30px rgba(20,40,28,.55)}}\n.card{transition:transform .3s,box-shadow .3s}@media(hover:hover){.card:hover{transform:translateY(-2px);box-shadow:0 10px 24px -12px rgba(0,0,0,.2)}}\n.serif{font-family:'Instrument Serif',Georgia,serif}\n.draw{stroke-dasharray:600;stroke-dashoffset:600;animation:draw 2s .8s forwards}\n@keyframes draw{to{stroke-dashoffset:0}}\nhtml{-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent}\nbody{min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}\nimg,svg{max-width:100%}button,a,select,input{touch-action:manipulation}\ninput,select,textarea,button{font-family:inherit}\n.tap{display:inline-flex;align-items:center;justify-content:center}\n@media(pointer:coarse){.tap{min-height:42px}}\n@media(max-width:640px){input,select,textarea{font-size:16px!important}}\n:focus-visible{outline:2px solid #1f3a2c;outline-offset:2px}\n@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-delay:0s!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.rise,.reveal{opacity:1!important;transform:none!important}.draw{stroke-dashoffset:0!important}}\n</style>\n</head>\n<body>\n";const REACT_TAGS="<script src=\"https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js\"><\/script>\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js\"><\/script>\n";
+const { useState, useEffect, useRef, useMemo } = React;
+const PH = "(placeholder)";
+const mk = (id, name, cat, sub, gauge, h, plat = "PC + Android") => ({ id, name, cat, sub, gauge, h, plat, ver: "v\u2014 " + PH, size: "\u2014 MB " + PH, price: "Free " + PH, url: "", desc: "Description for " + name + " goes here " + PH + ". Replace with real details." });
+const A0 = [
+  mk("wdm-3a", "WDM-3A", "Locomotive", "Broad Gauge Locomotives", "Broad", 150),
+  mk("wdm-3d", "WDM-3D", "Locomotive", "Broad Gauge Locomotives", "Broad", 170),
+  mk("wdm-2b", "WDM-2B", "Locomotive", "Broad Gauge Locomotives", "Broad", 30),
+  mk("dl543", "DL543", "Locomotive", "Meter Gauge Locomotives", "Meter", 100),
+  mk("gt18la-2", "GT18LA-2", "Locomotive", "Meter Gauge Locomotives", "Meter", 200),
+  mk("coach-mg", "Meter Gauge Coach", "Coach", "Meter Gauge Coaches", "Meter", 120),
+  mk("coach-bg", "Broad Gauge Coach", "Coach", "Broad Gauge Coaches", "Broad", 140),
+  mk("coach-inka", "PT INKA Coach", "Coach", "PT INKA Coaches", "Broad", 20),
+  mk("coach-lhb", "LHB Coach", "Coach", "LHB Coaches", "Broad", 210),
+  mk("coach-ic", "Intercity Coach", "Coach", "Intercity Coaches", "Broad", 160),
+  mk("coach-local", "Local Coach", "Coach", "Local Coaches", "Meter", 90),
+  mk("wagon-freight", "Freight Wagon", "Wagon", "Freight Wagons", "Meter", 60),
+  mk("wagon-oil", "Oil Tanker", "Wagon", "Oil Tankers", "Broad", 40),
+  mk("wagon-other", "Other Railway Asset", "Wagon", "Other Railway Assets", "Meter", 80),
+  mk("route-bd", "Bangladesh Route Pack", "Route", "PC routes", "Both", 130, "PC"),
+  mk("route-mg", "Meter Gauge Map", "Route", "Meter Gauge maps", "Meter", 110, "PC"),
+  mk("route-bg", "Broad Gauge Map", "Route", "Broad Gauge maps", "Broad", 145, "PC"),
+  mk("route-and", "Android Route", "Route", "Android routes", "Both", 190, "Android")
+];
+const T0 = ["Trainz Simulator PC installation", "Android installation", "Asset installation", "Route installation", "Troubleshooting guides"].map((t, i) => ({ t, d: "Guide content goes here " + PH }));
+const N0 = [["New release", "Add your latest release here " + PH], ["Announcement", "Community announcement " + PH], ["Website update", "Website changelog entry " + PH]].map(([k, t], i) => ({ k, t, date: "Date " + PH }));
+const NAV = [["Home", "home"], ["Downloads", "get-assets"], ["Locomotives", "locomotives"], ["Coaches", "coaches"], ["Routes", "routes"], ["Tutorials", "tutorials"], ["About", "about"]];
+const GROUPS = { Coach: ["Meter Gauge Coaches", "Broad Gauge Coaches", "PT INKA Coaches", "LHB Coaches", "Intercity Coaches", "Local Coaches"], Wagon: ["Freight Wagons", "Oil Tankers", "Other Railway Assets"], Route: ["Bangladesh railway routes", "Meter Gauge maps", "Broad Gauge maps", "PC routes", "Android routes"] };
+const S0 = { brand: "Bangladesh Trainz", eyebrow: "Bangladesh Railway Simulation", h1a: "Experience Bangladesh Railways", h1b: "Down to Every Detail", desc: "Your destination for Bangladesh railway locomotives, rolling stock, routes and simulator resources.", about: "Write your community story here " + PH + ".", aboutTitle: "A community for Bangladesh railway simulation", foot: "Community platform for Bangladesh railway simulator assets " + PH + ".", credits: "Developer credits " + PH, copy: "\xA9 2026 Bangladesh Trainz", tH1: "#a8aaa4", tH2: "#1a1d1a", tHead: "#1a1d1a", tBody: "#5c5f5b", tAccent: "#5d7566", bgColor: "#b9c4a9", boxColor: "#f4f0e6", texture: "on", scenery: "art", pageImg: "", sceneImg: "", s1: "Facebook " + PH, s2: "YouTube " + PH, s3: "Discord " + PH };
+const D0 = () => ({ assets: A0, tuts: T0, news: N0, site: S0 });
+const mrg = (x) => ({ ...D0(), ...x, site: { ...S0, ...x.site } });
+let DB = D0(), OWNER = false;
+try {
+  const x = JSON.parse(document.getElementById("bt-state").textContent);
+  if (x && x.assets) DB = mrg(x);
+} catch (e) {
+}
+const PUB = JSON.stringify(DB);
+const subs = /* @__PURE__ */ new Set();
+let saveErr = "";
+function setDB(d) {
+  DB = d;
+  if (OWNER) {
+    try {
+      localStorage.setItem("bt-data", JSON.stringify(d));
+      saveErr = "";
+    } catch (e) {
+      saveErr = "Storage full: remove some images.";
+    }
+  }
+  subs.forEach((f) => f());
+}
+let AUTH = null, SAVED = /* @__PURE__ */ new Set(), DBH = null;
+const toggleSave = (id) => {
+  const n = new Set(SAVED);
+  n.has(id) ? n.delete(id) : n.add(id);
+  SAVED = n;
+  if (DBH) DBH.set({ ids: [...n] }).catch(() => {
+  });
+  subs.forEach((f) => f());
+};
+(async () => {
+  try {
+    const u = window.claude && await window.claude.use("user");
+    if (!u) return;
+    if (await u.isOwner()) {
+      OWNER = true;
+      try {
+        const x = JSON.parse(localStorage.getItem("bt-data"));
+        if (x && x.assets) DB = mrg(x);
+      } catch (e) {
+      }
+      subs.forEach((f) => f());
+    }
+    const me = await u.me();
+    if (me && me.id) {
+      AUTH = { id: me.id, name: me.name || "Member", avatar: me.avatarUrl || "" };
+      subs.forEach((f) => f());
+      try {
+        const d = await window.claude.use("db");
+        if (d) {
+          DBH = d.collection("data/users/" + me.id).doc("saved");
+          const sn = await DBH.get();
+          if (sn.exists) SAVED = new Set(sn.data().ids || []);
+          subs.forEach((f) => f());
+        }
+      } catch (e) {
+      }
+    }
+  } catch (e) {
+  }
+})();
+const buildDoc = () => HEAD_HTML + '<div id="root"></div>\n' + REACT_TAGS + '<script id="bt-state" type="application/json">' + JSON.stringify(DB).replace(/</g, "\\u003c") + '<\/script>\n<script id="bt-app">' + document.getElementById("bt-app").textContent + "<\/script>\n</body>\n</html>";
+const UI = { open: null };
+const openAdmin = (tab, sel) => UI.open && UI.open({ o: 1, tab: tab || "Assets", sel: sel || null });
+const P = { train: "M4 15V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3zM4 11h16M8 21l2-3M16 21l-2-3", menu: "M4 6h16M4 12h16M4 18h16", x: "M18 6 6 18M6 6l12 12", grid: "M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z", pc: "M3 4h18v12H3zM8 20h8M12 16v4", phone: "M7 2h10v20H7zM11 18h2", map: "M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15", book: "M4 4h7a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H4zM20 4h-6M20 4v15h-6", news: "M4 4h14v16H6a2 2 0 0 1-2-2zM8 8h6M8 12h6M8 16h4", box: "M21 8 12 3 3 8v8l9 5 9-5zM3 8l9 5 9-5M12 13v8", dl: "M12 3v12M7 10l5 5 5-5M4 21h16", search: "M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.3-4.3", arrow: "M5 12h14M13 6l6 6-6 6", back: "M19 12H5M11 6l-6 6 6 6", up: "M7 17 17 7M7 7h10v10", leaf: "M4 20c0-9 5-15 16-16 0 11-6 16-16 16zM4 20 14 10" };
+const I = ({ n, s = 16, c = "" }) => /* @__PURE__ */ React.createElement("svg", { width: s, height: s, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round", className: c }, /* @__PURE__ */ React.createElement("path", { d: P[n] }));
+const hex = (h, s, l) => {
+  s /= 100;
+  l /= 100;
+  const f = (n) => {
+    const k = (n + h / 30) % 12, a = s * Math.min(l, 1 - l);
+    return Math.round(255 * (l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)))).toString(16).padStart(2, "0");
+  };
+  return "#" + f(0) + f(8) + f(4);
+};
+const defCol = (a) => ({ body: hex((a.h + 170) % 360, 40, a.cat === "Locomotive" ? 32 : 45), sky: hex(a.h, 30, 82), hills: hex(a.h, 28, 60), ground: hex((a.h + 60) % 360, 30, 42) });
+const eff = (a, k) => ((DB.site.typeArt || {})[a.cat] || {})[k] || defCol(a)[k];
+const Pic = ({ a, v = 0, className = "" }) => {
+  const T = DB.site.typeImg || {}, m = a.imgs && a.imgs[v] || !(a.imgs && a.imgs.length) && T[a.cat];
+  return m ? /* @__PURE__ */ React.createElement("img", { src: m, alt: a.name, loading: "lazy", decoding: "async", className: className + " object-cover" }) : /* @__PURE__ */ React.createElement(Art, { k: a.cat, h: a.h, v, c: { ...(DB.site.typeArt || {})[a.cat], ...a.art }, st: a.style || 0, className });
+};
+const Logo = () => /* @__PURE__ */ React.createElement("a", { href: "#home", className: "flex items-center gap-2 font-semibold tracking-tight" }, /* @__PURE__ */ React.createElement("span", { className: "w-7 h-7 rounded-full bg-forest text-cream grid place-items-center" }, /* @__PURE__ */ React.createElement(I, { n: "train", s: 14 })), DB.site.brand);
+function Art({ k, h, v = 0, c = {}, st = 0, className = "" }) {
+  const hh = h + v * 25;
+  const body = c.body || `hsl(${(hh + 170) % 360} 40% ${k === "Locomotive" ? 32 : 45}%)`;
+  return /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 200 120", preserveAspectRatio: "xMidYMid slice", className }, /* @__PURE__ */ React.createElement("defs", null, /* @__PURE__ */ React.createElement("linearGradient", { id: "s" + h + v, x1: "0", y1: "0", x2: "0", y2: "1" }, /* @__PURE__ */ React.createElement("stop", { offset: "0", stopColor: c.sky || `hsl(${hh} 30% 82%)` }), /* @__PURE__ */ React.createElement("stop", { offset: "1", stopColor: "#f3eedd" }))), /* @__PURE__ */ React.createElement("rect", { width: "200", height: "120", fill: `url(#s${h}${v})` }), /* @__PURE__ */ React.createElement("path", { d: "M0 70q40-26 90-8t110-10v68H0z", fill: c.hills || `hsl(${hh} 28% 60%)`, opacity: ".7" }), /* @__PURE__ */ React.createElement("path", { d: "M0 84q60-14 110 0t90-4v40H0z", fill: c.ground || `hsl(${(hh + 60) % 360} 30% 42%)` }), /* @__PURE__ */ React.createElement("path", { d: "M0 100h200M0 108h200", stroke: "#3b3a33", strokeWidth: "1.4" }), /* @__PURE__ */ React.createElement("path", { d: "M0 104h200", stroke: "#6b5a3e", strokeWidth: "5", strokeDasharray: "2 6", opacity: ".6" }), k === "Locomotive" && (st === 1 || st === 2) && /* @__PURE__ */ React.createElement("g", null, /* @__PURE__ */ React.createElement("rect", { x: "38", y: st === 1 ? 72 : 64, width: "124", height: st === 1 ? 24 : 32, rx: "4", fill: body }), /* @__PURE__ */ React.createElement("rect", { x: "38", y: "58", width: "44", height: "38", rx: "4", fill: body }), st === 2 && /* @__PURE__ */ React.createElement("rect", { x: "118", y: "58", width: "44", height: "38", rx: "4", fill: body }), /* @__PURE__ */ React.createElement("rect", { x: "46", y: "64", width: "16", height: "12", rx: "2", fill: "#dfe8df" }), st === 2 && /* @__PURE__ */ React.createElement("rect", { x: "138", y: "64", width: "16", height: "12", rx: "2", fill: "#dfe8df" }), /* @__PURE__ */ React.createElement("rect", { x: "38", y: "84", width: "124", height: "4", fill: "#f4f0e6", opacity: ".7" }), [52, 86, 114, 148].map((x) => /* @__PURE__ */ React.createElement("circle", { key: x, cx: x, cy: "99", r: "5", fill: "#222" }))), k === "Locomotive" && !(st === 1 || st === 2) && /* @__PURE__ */ React.createElement("g", null, /* @__PURE__ */ React.createElement("rect", { x: "45", y: "62", width: "110", height: "34", rx: "4", fill: body }), /* @__PURE__ */ React.createElement("rect", { x: "45", y: "62", width: "34", height: "42", rx: "4", fill: body }), /* @__PURE__ */ React.createElement("rect", { x: "52", y: "68", width: "14", height: "12", rx: "2", fill: "#dfe8df" }), /* @__PURE__ */ React.createElement("rect", { x: "45", y: "84", width: "110", height: "5", fill: "#f4f0e6", opacity: ".7" }), /* @__PURE__ */ React.createElement("rect", { x: "100", y: "56", width: "18", height: "6", fill: "#222" }), [56, 90, 124, 142].map((x) => /* @__PURE__ */ React.createElement("circle", { key: x, cx: x, cy: "99", r: "5", fill: "#222" }))), k === "Coach" && /* @__PURE__ */ React.createElement("g", null, /* @__PURE__ */ React.createElement("rect", { x: "20", y: "62", width: "160", height: "34", rx: "6", fill: body }), [0, 1, 2, 3, 4, 5, 6].map((i) => /* @__PURE__ */ React.createElement("rect", { key: i, x: 32 + i * 21, y: "68", width: "14", height: "10", rx: "2", fill: "#e8efe6" })), /* @__PURE__ */ React.createElement("rect", { x: "20", y: "84", width: "160", height: "4", fill: "#f4f0e6", opacity: ".7" }), [40, 60, 140, 160].map((x) => /* @__PURE__ */ React.createElement("circle", { key: x, cx: x, cy: "99", r: "4.5", fill: "#222" }))), k === "Wagon" && /* @__PURE__ */ React.createElement("g", null, v % 2 ? /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("rect", { x: "35", y: "72", width: "130", height: "22", rx: "11", fill: body }), /* @__PURE__ */ React.createElement("rect", { x: "75", y: "64", width: "12", height: "8", fill: "#333" })) : /* @__PURE__ */ React.createElement("rect", { x: "30", y: "64", width: "140", height: "30", fill: body }), [50, 70, 130, 150].map((x) => /* @__PURE__ */ React.createElement("circle", { key: x, cx: x, cy: "99", r: "4.5", fill: "#222" }))), k === "Route" && /* @__PURE__ */ React.createElement("g", null, /* @__PURE__ */ React.createElement("path", { d: "M10 40q40 50 80 10t100 20", fill: "none", stroke: "#fff", strokeWidth: "3", opacity: ".85" }), /* @__PURE__ */ React.createElement("path", { d: "M10 40q40 50 80 10t100 20", fill: "none", stroke: body, strokeWidth: "1.5", strokeDasharray: "4 3" }), [[10, 40], [90, 50], [190, 70]].map(([x, y], i) => /* @__PURE__ */ React.createElement("circle", { key: i, cx: x, cy: y, r: "5", fill: "#fff", stroke: body, strokeWidth: "2" }))));
+}
+function Scenery({ side }) {
+  const r = side === "r";
+  return /* @__PURE__ */ React.createElement("svg", { "aria-hidden": "true", viewBox: "0 0 600 800", preserveAspectRatio: "xMidYMax slice", className: "absolute bottom-0 h-full w-[50%] pointer-events-none", style: { [r ? "right" : "left"]: 0, transform: r ? "scaleX(-1)" : "none" } }, /* @__PURE__ */ React.createElement("defs", null, /* @__PURE__ */ React.createElement("linearGradient", { id: "f" + side, x1: "0", x2: "1" }, /* @__PURE__ */ React.createElement("stop", { offset: "0", stopColor: "#fff" }), /* @__PURE__ */ React.createElement("stop", { offset: ".55", stopColor: "#fff" }), /* @__PURE__ */ React.createElement("stop", { offset: "1", stopColor: "#fff", stopOpacity: "0" })), /* @__PURE__ */ React.createElement("mask", { id: "m" + side }, /* @__PURE__ */ React.createElement("rect", { width: "600", height: "800", fill: `url(#f${side})` })), /* @__PURE__ */ React.createElement("filter", { id: "b" + side }, /* @__PURE__ */ React.createElement("feGaussianBlur", { stdDeviation: "7" })), /* @__PURE__ */ React.createElement("linearGradient", { id: "g" + side, x1: "0", y1: "0", x2: "0", y2: "1" }, /* @__PURE__ */ React.createElement("stop", { offset: "0", stopColor: "#f6e9c3", stopOpacity: ".6" }), /* @__PURE__ */ React.createElement("stop", { offset: "1", stopColor: "#b9c4a9", stopOpacity: "0" }))), /* @__PURE__ */ React.createElement("g", { mask: `url(#m${side})` }, /* @__PURE__ */ React.createElement("rect", { y: "200", width: "600", height: "300", fill: `url(#g${side})` }), /* @__PURE__ */ React.createElement("g", { filter: `url(#b${side})`, opacity: ".6" }, /* @__PURE__ */ React.createElement("path", { d: "M0 400q120-60 260-10t340-30v440H0z", fill: "#8a9a74" })), /* @__PURE__ */ React.createElement("path", { d: "M0 470q150-40 300 10t300-20v340H0z", fill: "#6c8554" }), /* @__PURE__ */ React.createElement("path", { d: "M0 560q160-30 330 20t270-10v230H0z", fill: "#587a45" }), /* @__PURE__ */ React.createElement("g", { fill: "#35502f", opacity: ".75" }, [30, 70, 120, 200, 260].map((x, i) => /* @__PURE__ */ React.createElement("g", { key: x }, /* @__PURE__ */ React.createElement("rect", { x, y: 460 + i * 6, width: "4", height: "34" }), /* @__PURE__ */ React.createElement("ellipse", { cx: x + 2, cy: 452 + i * 6, rx: "20", ry: "26" })))), side === "l" ? /* @__PURE__ */ React.createElement("g", null, /* @__PURE__ */ React.createElement("path", { d: "M0 520h400", stroke: "#2c2b25", strokeWidth: "5" }), [...Array(14)].map((_, i) => /* @__PURE__ */ React.createElement("rect", { key: i, x: i * 30, y: "520", width: "6", height: "22", fill: "#2c2b25", opacity: ".6" })), /* @__PURE__ */ React.createElement("g", { stroke: "#2d3a30", strokeWidth: "5", fill: "none" }, /* @__PURE__ */ React.createElement("path", { d: "M0 530h360" }), /* @__PURE__ */ React.createElement("path", { d: "M0 470h360" }), [0, 60, 120, 180, 240, 300, 360].map((x) => /* @__PURE__ */ React.createElement("path", { key: x, d: `M${x} 470 ${x + 30} 530M${x + 30} 470 ${x} 530` }))), /* @__PURE__ */ React.createElement("path", { d: "M60 530v200M200 530v200M340 530v200", stroke: "#3f4338", strokeWidth: "16", opacity: ".7" }), /* @__PURE__ */ React.createElement("g", null, /* @__PURE__ */ React.createElement("rect", { x: "90", y: "420", width: "190", height: "50", rx: "6", fill: "#315a45" }), /* @__PURE__ */ React.createElement("rect", { x: "90", y: "420", width: "50", height: "50", rx: "6", fill: "#315a45" }), /* @__PURE__ */ React.createElement("rect", { x: "98", y: "428", width: "22", height: "16", fill: "#d9e4d6" }), /* @__PURE__ */ React.createElement("rect", { x: "90", y: "446", width: "190", height: "6", fill: "#f2e6c0" }), /* @__PURE__ */ React.createElement("rect", { x: "170", y: "408", width: "26", height: "12", fill: "#222" }))) : /* @__PURE__ */ React.createElement("g", null, /* @__PURE__ */ React.createElement("path", { d: "M0 600q150-60 380-120", stroke: "#2c2b25", strokeWidth: "6", fill: "none" }), /* @__PURE__ */ React.createElement("path", { d: "M0 640q170-70 420-130", stroke: "#2c2b25", strokeWidth: "6", fill: "none" }), /* @__PURE__ */ React.createElement("g", null, /* @__PURE__ */ React.createElement("path", { d: "M120 560l120-34v40l-120 38z", fill: "#2f5d7a" }), /* @__PURE__ */ React.createElement("path", { d: "M240 526l110-30v36l-110 34z", fill: "#b8472f" }), /* @__PURE__ */ React.createElement("path", { d: "M130 568l110-30M130 580l110-30", stroke: "#fff", strokeOpacity: ".6", strokeWidth: "3" }))), /* @__PURE__ */ React.createElement("path", { d: "M0 700q200-60 600-10v110H0z", fill: "#3f5a33" })));
+}
+function AssetCard({ a, go }) {
+  return /* @__PURE__ */ React.createElement("a", { href: "#asset-" + a.id, className: "card group block bg-white border border-black/[.07] rounded-2xl overflow-hidden" }, /* @__PURE__ */ React.createElement("div", { className: "relative aspect-[5/3] overflow-hidden" }, /* @__PURE__ */ React.createElement(Pic, { a, className: "w-full h-full group-hover:scale-105 transition duration-700" }), AUTH && /* @__PURE__ */ React.createElement("button", { "aria-label": SAVED.has(a.id) ? "Remove from saved" : "Save asset", onClick: (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleSave(a.id);
+  }, className: "absolute top-2 left-2 w-8 h-8 rounded-full bg-cream/90 text-forest grid place-items-center" }, /* @__PURE__ */ React.createElement("svg", { width: "15", height: "15", viewBox: "0 0 24 24", fill: SAVED.has(a.id) ? "currentColor" : "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2l3 7 7 .6-5.3 4.6 1.6 7L12 17.5l-5.3 3.7 1.6-7L3 9.6 10 9z" }))), OWNER && /* @__PURE__ */ React.createElement("button", { onClick: (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    openAdmin("Assets", a.id);
+  }, className: "absolute top-2 right-2 rounded-full bg-ink/80 text-cream text-[11px] px-2.5 py-1 sm:opacity-0 sm:group-hover:opacity-100 transition" }, "Edit cover")), /* @__PURE__ */ React.createElement("div", { className: "p-4" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-[11px] text-ink/50" }, /* @__PURE__ */ React.createElement("span", null, a.sub), /* @__PURE__ */ React.createElement("span", { className: "px-2 py-0.5 rounded-full bg-sage/40 text-forest" }, a.gauge)), /* @__PURE__ */ React.createElement("div", { className: "mt-1 font-semibold" }, a.name), /* @__PURE__ */ React.createElement("div", { className: "mt-3 flex items-center justify-between text-xs" }, /* @__PURE__ */ React.createElement("span", { className: "text-ink/50" }, a.price), /* @__PURE__ */ React.createElement("span", { className: "flex items-center gap-1 font-medium text-forest" }, "View ", /* @__PURE__ */ React.createElement(I, { n: "arrow", s: 13 })))));
+}
+const H = ({ id, k, t, s }) => {
+  var _a, _b, _c;
+  const o = (DB.site.sec || {})[id] || {};
+  k = (_a = o.k) != null ? _a : k;
+  t = (_b = o.t) != null ? _b : t;
+  s = (_c = o.s) != null ? _c : s;
+  return /* @__PURE__ */ React.createElement("div", { className: "mb-8 sm:mb-10" }, /* @__PURE__ */ React.createElement("div", { className: "text-[11px] uppercase tracking-[.25em]", style: { color: DB.site.tAccent } }, k), /* @__PURE__ */ React.createElement("h2", { className: "mt-2 text-3xl sm:text-5xl font-semibold tracking-[-0.03em]", style: { color: DB.site.tHead } }, t), s && /* @__PURE__ */ React.createElement("p", { className: "mt-3 max-w-xl text-sm sm:text-base", style: { color: DB.site.tBody } }, s));
+};
+function useReveal() {
+  const r = useRef();
+  useEffect(() => {
+    const o = new IntersectionObserver((e) => e.forEach((x) => x.isIntersecting && x.target.classList.add("in")), { threshold: 0.08 });
+    r.current && o.observe(r.current);
+    return () => o.disconnect();
+  }, []);
+  return r;
+}
+const Sec = ({ id, children, cls = "" }) => {
+  const r = useReveal();
+  return /* @__PURE__ */ React.createElement("section", { id, ref: r, className: "reveal relative z-10 px-4 sm:px-10 lg:px-16 py-14 sm:py-20 scroll-mt-24 " + cls }, children);
+};
+function Nav({}) {
+  const [o, setO] = useState(false);
+  return /* @__PURE__ */ React.createElement("header", { className: "absolute top-0 inset-x-0 z-30 px-4 sm:px-8 pt-4 sm:pt-6 rise" }, /* @__PURE__ */ React.createElement("div", { className: "mx-auto max-w-6xl bg-cream/85 backdrop-blur-md rounded-full px-4 sm:px-5 py-2.5 flex items-center justify-between shadow-sm border border-white/60" }, /* @__PURE__ */ React.createElement(Logo, null), /* @__PURE__ */ React.createElement("nav", { className: "hidden lg:flex gap-6 text-[13px] text-ink/70" }, NAV.map(([l, h]) => /* @__PURE__ */ React.createElement("a", { key: l, href: "#" + h, className: "hover:text-ink transition" }, l))), /* @__PURE__ */ React.createElement("div", { className: "hidden lg:flex items-center gap-4 text-[13px]" }, OWNER && /* @__PURE__ */ React.createElement("button", { onClick: () => openAdmin(), className: "text-ink/70 hover:text-ink" }, "Edit site"), /* @__PURE__ */ React.createElement("button", { onClick: () => UI.sign && UI.sign(true), className: "text-ink/70 hover:text-ink max-w-[110px] truncate" }, AUTH ? AUTH.name.split(" ")[0] : "Sign in"), /* @__PURE__ */ React.createElement("a", { href: "#get-assets", className: "bg-ink text-cream rounded-full px-4 py-2 font-medium hover:bg-forest transition" }, "Explore Downloads")), /* @__PURE__ */ React.createElement("button", { className: "lg:hidden p-1", "aria-label": "Menu", onClick: () => setO(!o) }, /* @__PURE__ */ React.createElement(I, { n: o ? "x" : "menu", s: 20 }))), o && /* @__PURE__ */ React.createElement("div", { className: "lg:hidden mt-2 mx-auto max-w-6xl bg-cream rounded-3xl p-5 flex flex-col gap-4 text-sm shadow-lg", onClick: () => setO(false) }, NAV.map(([l, h]) => /* @__PURE__ */ React.createElement("a", { key: l, href: "#" + h }, l)), OWNER && /* @__PURE__ */ React.createElement("button", { className: "text-left", onClick: () => openAdmin() }, "Edit site"), /* @__PURE__ */ React.createElement("button", { className: "text-left", onClick: () => UI.sign && UI.sign(true) }, AUTH ? AUTH.name : "Sign in"), /* @__PURE__ */ React.createElement("a", { href: "#get-assets", className: "bg-ink text-cream rounded-full py-2.5 text-center" }, "Explore Downloads")));
+}
+const SIDE = [["Overview", "grid"], ["PC Downloads", "pc"], ["Android Downloads", "phone"], ["Locomotives", "train"], ["Coaches", "box"], ["Wagons", "box"], ["Routes & Maps", "map"], ["Tutorials", "book"], ["News & Updates", "news"]];
+function Dash() {
+  const [t, setT] = useState("Overview");
+  const f = useMemo(() => ({ "PC Downloads": (a) => a.plat.includes("PC"), "Android Downloads": (a) => a.plat.includes("Android"), Locomotives: (a) => a.cat === "Locomotive", Coaches: (a) => a.cat === "Coach", Wagons: (a) => a.cat === "Wagon", "Routes & Maps": (a) => a.cat === "Route" })[t] || (() => true), [t]);
+  const list = DB.assets.filter(f);
+  const cnt = (c) => DB.assets.filter((a) => a.cat === c).length;
+  const stats = [["Total assets", DB.assets.length], ["Locomotives", cnt("Locomotive")], ["Coaches", cnt("Coach")], ["Routes", cnt("Route")]];
+  return /* @__PURE__ */ React.createElement("div", { className: "dash rounded-[22px] sm:rounded-[28px] bg-white border border-black/5 shadow-[0_40px_80px_-30px_rgba(20,40,28,.45)] overflow-hidden flex text-left" }, /* @__PURE__ */ React.createElement("aside", { className: "hidden md:flex flex-col w-52 bg-forest text-cream/80 p-4 shrink-0" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 text-cream font-semibold text-sm mb-6" }, /* @__PURE__ */ React.createElement(I, { n: "train", s: 16 }), "Trainz"), /* @__PURE__ */ React.createElement("div", { className: "space-y-1 text-xs" }, SIDE.map(([l, i]) => /* @__PURE__ */ React.createElement("button", { key: l, onClick: () => setT(l), className: `w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left transition ${t === l ? "bg-cream/15 text-cream" : "hover:bg-cream/5"}` }, /* @__PURE__ */ React.createElement(I, { n: i, s: 14 }), l)))), /* @__PURE__ */ React.createElement("div", { className: "flex-1 min-w-0 p-3 sm:p-5 bg-[#fbfaf6]" }, /* @__PURE__ */ React.createElement("div", { className: "md:hidden flex gap-1.5 overflow-x-auto pb-3 text-[11px]" }, SIDE.map(([l]) => /* @__PURE__ */ React.createElement("button", { key: l, onClick: () => setT(l), className: `shrink-0 px-3 py-1.5 rounded-full ${t === l ? "bg-forest text-cream" : "bg-white border border-black/10"}` }, l))), /* @__PURE__ */ React.createElement("div", { className: "mb-4" }, /* @__PURE__ */ React.createElement("div", { className: "text-[11px] text-ink/50" }, "Dashboard / ", t), /* @__PURE__ */ React.createElement("div", { className: "font-semibold" }, t)), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-2 lg:grid-cols-4 gap-2.5 mb-3" }, stats.map(([a, b]) => /* @__PURE__ */ React.createElement("div", { key: a, className: "card bg-white border border-black/[.07] rounded-xl p-3" }, /* @__PURE__ */ React.createElement("div", { className: "text-[11px] text-ink/50" }, a), /* @__PURE__ */ React.createElement("div", { className: "text-xl font-semibold mt-1" }, b), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-ink/40" }, "editable ", PH)))), /* @__PURE__ */ React.createElement("div", { className: "grid lg:grid-cols-5 gap-3" }, /* @__PURE__ */ React.createElement("div", { className: "lg:col-span-3 bg-white border border-black/[.07] rounded-xl p-3" }, /* @__PURE__ */ React.createElement("div", { className: "text-xs font-semibold mb-2" }, t === "Tutorials" ? "Tutorials" : t === "News & Updates" ? "Updates" : "Featured downloads"), t === "Tutorials" ? DB.tuts.map((x) => /* @__PURE__ */ React.createElement("div", { key: x.t, className: "text-xs py-2 border-b border-black/5" }, x.t)) : t === "News & Updates" ? DB.news.map((x) => /* @__PURE__ */ React.createElement("div", { key: x.t, className: "text-xs py-2 border-b border-black/5" }, /* @__PURE__ */ React.createElement("b", null, x.k), " \xB7 ", x.t)) : /* @__PURE__ */ React.createElement("div", { className: "grid sm:grid-cols-2 gap-2" }, list.slice(0, 4).map((a) => /* @__PURE__ */ React.createElement("a", { key: a.id, href: "#asset-" + a.id, className: "flex gap-2.5 items-center p-2 rounded-lg border border-black/[.06] hover:bg-cream/60 transition" }, /* @__PURE__ */ React.createElement(Pic, { a, className: "w-16 h-11 rounded-md shrink-0" }), /* @__PURE__ */ React.createElement("div", { className: "min-w-0" }, /* @__PURE__ */ React.createElement("div", { className: "text-xs font-semibold truncate" }, a.name), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-ink/50 truncate" }, a.gauge, " \xB7 ", a.plat)), /* @__PURE__ */ React.createElement("span", { className: "ml-auto w-7 h-7 rounded-full bg-forest text-cream grid place-items-center shrink-0" }, /* @__PURE__ */ React.createElement(I, { n: "dl", s: 12 })))))), /* @__PURE__ */ React.createElement("div", { className: "lg:col-span-2 bg-white border border-black/[.07] rounded-xl p-3" }, /* @__PURE__ */ React.createElement("div", { className: "text-xs font-semibold mb-2" }, "Recently released"), list.slice(-4).reverse().map((a) => /* @__PURE__ */ React.createElement("a", { key: a.id, href: "#asset-" + a.id, className: "flex items-center gap-2 py-1.5 text-xs border-b border-black/5 hover:text-forest" }, /* @__PURE__ */ React.createElement(Pic, { a, className: "w-9 h-7 rounded shrink-0" }), /* @__PURE__ */ React.createElement("span", { className: "truncate" }, a.name), /* @__PURE__ */ React.createElement("span", { className: "ml-auto text-[10px] text-ink/40" }, a.cat))), /* @__PURE__ */ React.createElement("div", { className: "text-xs font-semibold mt-3 mb-1" }, "Latest updates"), DB.news.slice(0, 2).map((n) => /* @__PURE__ */ React.createElement("div", { key: n.t, className: "text-[11px] text-ink/60 py-1" }, "\u2022 ", n.k, ": ", n.t))))));
+}
+function Hero() {
+  return /* @__PURE__ */ React.createElement("section", { id: "home", className: "relative z-10 px-4 sm:px-10 pt-32 sm:pt-40 pb-16 sm:pb-24 text-center" }, /* @__PURE__ */ React.createElement("div", { className: "rise text-[11px] sm:text-xs uppercase tracking-[.28em] font-medium", style: { animationDelay: ".1s", color: DB.site.tAccent } }, DB.site.eyebrow), /* @__PURE__ */ React.createElement("h1", { className: "mt-5 font-semibold tracking-[-0.04em] leading-[1] text-[38px] sm:text-6xl lg:text-[84px]" }, /* @__PURE__ */ React.createElement("span", { className: "rise block", style: { animationDelay: ".2s", color: DB.site.tH1 } }, DB.site.h1a), /* @__PURE__ */ React.createElement("span", { className: "rise block", style: { animationDelay: ".35s", color: DB.site.tH2 } }, DB.site.h1b)), /* @__PURE__ */ React.createElement("p", { className: "rise mx-auto mt-6 max-w-xl text-sm sm:text-base", style: { animationDelay: ".5s", color: DB.site.tBody } }, DB.site.desc), /* @__PURE__ */ React.createElement("div", { className: "rise mt-7 flex justify-center gap-3", style: { animationDelay: ".6s" } }, /* @__PURE__ */ React.createElement("a", { href: "#get-assets", className: "inline-flex items-center gap-2 bg-ink text-cream rounded-full px-5 py-3 text-sm font-medium hover:bg-forest transition" }, "Explore Downloads ", /* @__PURE__ */ React.createElement(I, { n: "arrow", s: 15 })), /* @__PURE__ */ React.createElement("a", { href: "#tutorials", className: "hidden sm:inline-flex rounded-full px-5 py-3 text-sm font-medium border border-ink/15 hover:bg-white/60 transition" }, "Installation guides")), /* @__PURE__ */ React.createElement("div", { className: "rise relative mx-auto mt-12 sm:mt-16 max-w-5xl", style: { animationDelay: ".75s" } }, /* @__PURE__ */ React.createElement(Dash, null)));
+}
+function Browse() {
+  const [q, setQ] = useState("");
+  const [cat, setCat] = useState("All");
+  const [g, setG] = useState("All");
+  const [so, setSo] = useState("new");
+  const [sv, setSv] = useState(false);
+  const L = DB.assets.map((a, i) => ({ ...a, n: i })).filter((a) => (cat === "All" || a.cat === cat) && (g === "All" || a.gauge === g) && (!sv || SAVED.has(a.id)) && (a.name + a.sub).toLowerCase().includes(q.toLowerCase())).sort((a, b) => so === "az" ? a.name.localeCompare(b.name) : so === "za" ? b.name.localeCompare(a.name) : b.n - a.n);
+  const Chip = ({ v, cur, set }) => /* @__PURE__ */ React.createElement("button", { onClick: () => set(v), className: `tap px-3.5 py-1.5 rounded-full text-xs transition ${cur === v ? "bg-forest text-cream" : "bg-white border border-black/10 hover:border-forest/40"}` }, v);
+  return /* @__PURE__ */ React.createElement(Sec, { id: "get-assets" }, /* @__PURE__ */ React.createElement(H, { id: "feat", k: "Featured Downloads", t: "Recently released assets", s: "Search, filter and sort the full library." }), /* @__PURE__ */ React.createElement("div", { className: "flex flex-col lg:flex-row gap-3 lg:items-center mb-6" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 bg-white border border-black/10 rounded-full px-4 py-2.5 lg:w-72" }, /* @__PURE__ */ React.createElement(I, { n: "search", s: 15 }), /* @__PURE__ */ React.createElement("input", { value: q, onChange: (e) => setQ(e.target.value), placeholder: "Search assets", "aria-label": "Search assets", className: "bg-transparent outline-none text-sm w-full" })), /* @__PURE__ */ React.createElement("div", { className: "flex flex-wrap gap-2" }, ["All", "Locomotive", "Coach", "Wagon", "Route"].map((c) => /* @__PURE__ */ React.createElement(Chip, { key: c, v: c, cur: cat, set: setCat }))), AUTH && /* @__PURE__ */ React.createElement("button", { onClick: () => setSv(!sv), className: `tap px-3.5 py-1.5 rounded-full text-xs ${sv ? "bg-forest text-cream" : "bg-white border border-black/10"}` }, "\u2605 Saved (", SAVED.size, ")"), /* @__PURE__ */ React.createElement("div", { className: "flex flex-wrap gap-2 lg:ml-auto" }, ["All", "Meter", "Broad"].map((c) => /* @__PURE__ */ React.createElement(Chip, { key: c, v: c, cur: g, set: setG })), /* @__PURE__ */ React.createElement("select", { value: so, onChange: (e) => setSo(e.target.value), "aria-label": "Sort", className: "rounded-full bg-white border border-black/10 px-3 py-1.5 text-xs" }, /* @__PURE__ */ React.createElement("option", { value: "new" }, "Newest"), /* @__PURE__ */ React.createElement("option", { value: "az" }, "A\u2013Z"), /* @__PURE__ */ React.createElement("option", { value: "za" }, "Z\u2013A")))), L.length ? /* @__PURE__ */ React.createElement("div", { className: "grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" }, L.map((a) => /* @__PURE__ */ React.createElement(AssetCard, { key: a.id, a }))) : /* @__PURE__ */ React.createElement("div", { className: "text-center py-16 text-ink/50" }, "No assets match your filters."));
+}
+const Panel = ({ t, children }) => /* @__PURE__ */ React.createElement("div", { className: "bg-white/70 border border-black/[.06] rounded-3xl p-5 sm:p-6" }, /* @__PURE__ */ React.createElement("div", { className: "font-semibold mb-3" }, t), children);
+const Tags = ({ items }) => /* @__PURE__ */ React.createElement("div", { className: "flex flex-wrap gap-2" }, items.map((x) => /* @__PURE__ */ React.createElement("span", { key: x, className: "px-3 py-1.5 rounded-full bg-cream border border-black/[.07] text-xs" }, x)));
+function Sections() {
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Sec, { id: "locomotives" }, /* @__PURE__ */ React.createElement(H, { id: "loco", k: "Locomotive Library", t: "Meter & Broad Gauge", s: "Examples below are editable entries." }), /* @__PURE__ */ React.createElement("div", { className: "grid md:grid-cols-2 gap-5" }, ["Meter", "Broad"].map((g) => /* @__PURE__ */ React.createElement(Panel, { key: g, t: g + " Gauge Locomotives" }, /* @__PURE__ */ React.createElement("div", { className: "grid sm:grid-cols-2 gap-3" }, DB.assets.filter((a) => a.cat === "Locomotive" && a.gauge === g).map((a) => /* @__PURE__ */ React.createElement(AssetCard, { key: a.id, a }))))))), /* @__PURE__ */ React.createElement(Sec, { id: "coaches" }, /* @__PURE__ */ React.createElement(H, { id: "coach", k: "Passenger Coaches", t: "Every coach family" }), /* @__PURE__ */ React.createElement("div", { className: "grid sm:grid-cols-2 lg:grid-cols-3 gap-4" }, DB.assets.filter((a) => a.cat === "Coach").map((a) => /* @__PURE__ */ React.createElement(AssetCard, { key: a.id, a })))), /* @__PURE__ */ React.createElement(Sec, { id: "wagons" }, /* @__PURE__ */ React.createElement(H, { id: "wagon", k: "Wagons & Other Rolling Stock", t: "Freight, tankers & more" }), /* @__PURE__ */ React.createElement("div", { className: "grid sm:grid-cols-3 gap-4" }, DB.assets.filter((a) => a.cat === "Wagon").map((a) => /* @__PURE__ */ React.createElement(AssetCard, { key: a.id, a })))), /* @__PURE__ */ React.createElement(Sec, { id: "routes" }, /* @__PURE__ */ React.createElement(H, { id: "route", k: "Routes & Maps", t: "Lay down the line" }), /* @__PURE__ */ React.createElement("div", { className: "grid sm:grid-cols-2 lg:grid-cols-4 gap-4" }, DB.assets.filter((a) => a.cat === "Route").map((a) => /* @__PURE__ */ React.createElement(AssetCard, { key: a.id, a }))), /* @__PURE__ */ React.createElement("div", { className: "mt-6" }, /* @__PURE__ */ React.createElement(Tags, { items: GROUPS.Route }))), /* @__PURE__ */ React.createElement(Sec, { id: "tutorials" }, /* @__PURE__ */ React.createElement(H, { id: "tut", k: "Tutorials", t: "Get up and running" }), /* @__PURE__ */ React.createElement("div", { className: "grid sm:grid-cols-2 lg:grid-cols-3 gap-4" }, DB.tuts.map((x, i) => /* @__PURE__ */ React.createElement("div", { key: x.t, className: "card bg-white border border-black/[.07] rounded-2xl p-5" }, /* @__PURE__ */ React.createElement("div", { className: "w-9 h-9 rounded-full bg-forest text-cream grid place-items-center text-sm" }, i + 1), /* @__PURE__ */ React.createElement("div", { className: "mt-3 font-semibold" }, x.t), /* @__PURE__ */ React.createElement("p", { className: "text-sm mt-1", style: { color: DB.site.tBody } }, x.d))))), /* @__PURE__ */ React.createElement(Sec, { id: "news" }, /* @__PURE__ */ React.createElement(H, { id: "news", k: "Latest News & Updates", t: "What's new" }), /* @__PURE__ */ React.createElement("div", { className: "divide-y divide-black/10 border-y border-black/10" }, DB.news.map((n) => /* @__PURE__ */ React.createElement("div", { key: n.t, className: "py-4 flex flex-wrap gap-x-6 gap-y-1 items-baseline" }, /* @__PURE__ */ React.createElement("span", { className: "text-[11px] uppercase tracking-widest text-forest/70 w-32" }, n.k), /* @__PURE__ */ React.createElement("span", { className: "font-medium flex-1" }, n.t), /* @__PURE__ */ React.createElement("span", { className: "text-xs text-ink/40" }, n.date))))), /* @__PURE__ */ React.createElement(Sec, { id: "about" }, /* @__PURE__ */ React.createElement("div", { className: "max-w-2xl mx-auto text-center" }, /* @__PURE__ */ React.createElement(H, { k: "About", t: DB.site.aboutTitle }), /* @__PURE__ */ React.createElement("p", { className: "-mt-4", style: { color: DB.site.tBody } }, DB.site.about))));
+}
+function Detail({ a }) {
+  const [v, setV] = useState(0);
+  const rows = [["Gauge", a.gauge], ["Compatibility", a.plat], ["Version", a.ver], ["File size", a.size], ["Category", a.sub]];
+  return /* @__PURE__ */ React.createElement("section", { className: "relative z-10 px-4 sm:px-10 lg:px-16 pt-32 pb-16 min-h-[80vh]" }, /* @__PURE__ */ React.createElement("a", { href: "#get-assets", className: "inline-flex items-center gap-2 text-sm text-forest hover:underline" }, /* @__PURE__ */ React.createElement(I, { n: "back", s: 15 }), "All downloads"), /* @__PURE__ */ React.createElement("div", { className: "mt-6 grid lg:grid-cols-5 gap-8" }, /* @__PURE__ */ React.createElement("div", { className: "lg:col-span-3" }, /* @__PURE__ */ React.createElement("div", { className: "rounded-3xl overflow-hidden border border-black/10 aspect-[5/3]" }, /* @__PURE__ */ React.createElement(Pic, { a, v, className: "w-full h-full" })), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-3 gap-3 mt-3" }, (a.imgs && a.imgs.length ? a.imgs.map((_, i) => i) : [0, 1, 2]).map((i) => /* @__PURE__ */ React.createElement("button", { key: i, onClick: () => setV(i), "aria-label": "Image " + (i + 1), className: `rounded-xl overflow-hidden border-2 ${v === i ? "border-forest" : "border-transparent"}` }, /* @__PURE__ */ React.createElement(Pic, { a, v: i, className: "w-full aspect-[5/3]" }))))), /* @__PURE__ */ React.createElement("div", { className: "lg:col-span-2" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement("span", { className: "px-3 py-1 rounded-full bg-sage/50 text-forest text-xs" }, a.price), OWNER && /* @__PURE__ */ React.createElement("button", { onClick: () => openAdmin("Assets", a.id), className: "px-3 py-1 rounded-full border border-forest/30 text-forest text-xs hover:bg-forest hover:text-cream transition" }, "Edit this asset"), AUTH && /* @__PURE__ */ React.createElement("button", { onClick: () => toggleSave(a.id), className: "px-3 py-1 rounded-full border border-forest/30 text-forest text-xs" }, SAVED.has(a.id) ? "\u2605 Saved" : "\u2606 Save")), /* @__PURE__ */ React.createElement("h1", { className: "mt-3 text-4xl sm:text-5xl font-semibold tracking-[-0.03em]", style: { color: DB.site.tHead } }, a.name), /* @__PURE__ */ React.createElement("p", { className: "mt-3", style: { color: DB.site.tBody } }, a.desc), /* @__PURE__ */ React.createElement("div", { className: "mt-5 bg-white/70 rounded-2xl border border-black/[.06] divide-y divide-black/5" }, rows.map(([k, x]) => /* @__PURE__ */ React.createElement("div", { key: k, className: "flex justify-between px-4 py-2.5 text-sm" }, /* @__PURE__ */ React.createElement("span", { className: "text-ink/50" }, k), /* @__PURE__ */ React.createElement("span", { className: "font-medium text-right" }, x)))), a.url ? /* @__PURE__ */ React.createElement("a", { href: a.url, className: "mt-5 inline-flex items-center gap-2 bg-ink text-cream rounded-full px-6 py-3 text-sm font-medium hover:bg-forest transition" }, /* @__PURE__ */ React.createElement(I, { n: "dl", s: 16 }), "Download") : /* @__PURE__ */ React.createElement("button", { disabled: true, className: "mt-5 inline-flex items-center gap-2 bg-ink/40 text-cream rounded-full px-6 py-3 text-sm font-medium cursor-not-allowed" }, /* @__PURE__ */ React.createElement(I, { n: "dl", s: 16 }), "Download link not set"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-ink/40 mt-2" }, "Add a url to this asset in the CMS block."))), /* @__PURE__ */ React.createElement("div", { className: "mt-10 bg-white/70 border border-black/[.06] rounded-3xl p-6" }, /* @__PURE__ */ React.createElement("div", { className: "font-semibold mb-3" }, "Installation instructions ", PH), /* @__PURE__ */ React.createElement("ol", { className: "list-decimal pl-5 space-y-1.5 text-sm text-ink/65" }, /* @__PURE__ */ React.createElement("li", null, "Download the file and extract it."), /* @__PURE__ */ React.createElement("li", null, "Open the simulator's content manager and import the asset."), /* @__PURE__ */ React.createElement("li", null, "Launch the simulator and place the asset in your session."))));
+}
+function Footer() {
+  return /* @__PURE__ */ React.createElement("footer", { id: "footer", className: "relative z-10 bg-forest text-cream/80 px-4 sm:px-10 lg:px-16 py-12 rounded-t-[28px]" }, /* @__PURE__ */ React.createElement("div", { className: "grid sm:grid-cols-2 lg:grid-cols-4 gap-8 text-sm" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "text-cream" }, /* @__PURE__ */ React.createElement(Logo, null)), /* @__PURE__ */ React.createElement("p", { className: "mt-3 text-cream/60 text-xs" }, DB.site.foot)), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "text-cream font-medium mb-3" }, "Navigate"), /* @__PURE__ */ React.createElement("div", { className: "space-y-2" }, NAV.map(([l, h]) => /* @__PURE__ */ React.createElement("a", { key: l, className: "block hover:text-cream", href: "#" + h }, l)))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "text-cream font-medium mb-3" }, "Categories"), /* @__PURE__ */ React.createElement("div", { className: "space-y-2" }, ["Locomotives|locomotives", "Coaches|coaches", "Wagons|wagons", "Routes & Maps|routes"].map((x) => {
+    const [l, h] = x.split("|");
+    return /* @__PURE__ */ React.createElement("a", { key: l, className: "block hover:text-cream", href: "#" + h }, l);
+  }))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "text-cream font-medium mb-3" }, "Social"), /* @__PURE__ */ React.createElement("div", { className: "space-y-2 text-cream/60" }, /* @__PURE__ */ React.createElement("div", null, DB.site.s1), /* @__PURE__ */ React.createElement("div", null, DB.site.s2), /* @__PURE__ */ React.createElement("div", null, DB.site.s3)))), /* @__PURE__ */ React.createElement("div", { className: "mt-10 pt-5 border-t border-cream/10 text-xs text-cream/50 flex flex-wrap justify-between gap-2" }, /* @__PURE__ */ React.createElement("span", null, DB.site.copy), /* @__PURE__ */ React.createElement("span", null, DB.site.credits)));
+}
+function App() {
+  const [, tick] = useState(0);
+  useEffect(() => {
+    const f = () => tick((x) => x + 1);
+    subs.add(f);
+    f();
+    return () => subs.delete(f);
+  }, []);
+  const [adm, setAdm] = useState({ o: 0 });
+  UI.open = setAdm;
+  const [sg, setSg] = useState(false);
+  UI.sign = setSg;
+  useEffect(() => {
+    document.documentElement.style.overflow = adm.o ? "hidden" : "";
+    const k = (e) => {
+      if (e.key === "Escape") {
+        setAdm({ o: 0 });
+        setSg(false);
+      }
+    };
+    addEventListener("keydown", k);
+    return () => removeEventListener("keydown", k);
+  }, [adm.o]);
+  useEffect(() => {
+    const s = DB.site, b = document.body.style;
+    b.backgroundColor = s.bgColor;
+    if (s.pageImg) {
+      b.backgroundImage = `url(${s.pageImg})`;
+      b.backgroundSize = "cover";
+      b.backgroundAttachment = "fixed";
+      b.backgroundPosition = "center";
+    } else if (s.texture === "on") {
+      b.backgroundImage = "radial-gradient(rgba(255,255,255,.18) 1px,transparent 1px),radial-gradient(rgba(0,0,0,.05) 1px,transparent 1px)";
+      b.backgroundSize = "5px 5px,7px 7px";
+      b.backgroundPosition = "0 0,2px 3px";
+      b.backgroundAttachment = "scroll";
+    } else b.backgroundImage = "none";
+  });
+  const [h, setH] = useState(location.hash.slice(1));
+  useEffect(() => {
+    const f = () => setH(location.hash.slice(1));
+    addEventListener("hashchange", f);
+    return () => removeEventListener("hashchange", f);
+  }, []);
+  const a = h.startsWith("asset-") && DB.assets.find((x) => "asset-" + x.id === h);
+  useEffect(() => {
+    if (a) {
+      window.scrollTo(0, 0);
+    } else if (h) {
+      setTimeout(() => {
+        const e = document.getElementById(h);
+        e && e.scrollIntoView({ behavior: "smooth" });
+      }, 60);
+    }
+  }, [h]);
+  return /* @__PURE__ */ React.createElement("div", { className: "p-2 sm:p-5 lg:p-6" }, /* @__PURE__ */ React.createElement("main", { className: "relative mx-auto max-w-[1440px] rounded-[26px] sm:rounded-[40px] overflow-hidden shadow-[0_30px_80px_-30px_rgba(40,55,30,.5)] border border-white/50", style: { backgroundColor: DB.site.boxColor, backgroundImage: "radial-gradient(circle at 50% 0%,rgba(255,255,255,.45),transparent 70%)" } }, /* @__PURE__ */ React.createElement(Nav, null), a ? /* @__PURE__ */ React.createElement(Detail, { key: a.id, a }) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "absolute inset-x-0 top-0 h-[1100px] sm:h-[1250px] overflow-hidden pointer-events-none" }, DB.site.scenery === "art" ? /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Scenery, { side: "l" }), /* @__PURE__ */ React.createElement(Scenery, { side: "r" })) : DB.site.scenery === "image" && DB.site.sceneImg ? /* @__PURE__ */ React.createElement("div", { className: "absolute inset-0", style: { backgroundImage: `url(${DB.site.sceneImg})`, backgroundSize: "cover", backgroundPosition: "center top", WebkitMaskImage: "linear-gradient(to bottom,#000 55%,transparent)", maskImage: "linear-gradient(to bottom,#000 55%,transparent)" } }) : null), /* @__PURE__ */ React.createElement(Hero, null), /* @__PURE__ */ React.createElement(Browse, null), /* @__PURE__ */ React.createElement(Sections, null)), /* @__PURE__ */ React.createElement(Footer, null)), OWNER && !adm.o && /* @__PURE__ */ React.createElement("button", { onClick: () => openAdmin(), style: { bottom: "calc(1rem + env(safe-area-inset-bottom,0px))", right: "calc(1rem + env(safe-area-inset-right,0px))" }, className: "tap fixed z-40 rounded-full bg-ink text-cream text-xs px-4 py-2.5 shadow-lg hover:bg-forest transition" }, "Edit site"), sg && /* @__PURE__ */ React.createElement(SignIn, { close: () => setSg(false) }), OWNER && adm.o ? /* @__PURE__ */ React.createElement(Admin, { adm, setAdm }) : null);
+}
+const SECS = [["feat", "Featured Downloads", "Recently released assets", "Search, filter and sort the full library."], ["loco", "Locomotive Library", "Meter & Broad Gauge", "Examples below are editable entries."], ["coach", "Passenger Coaches", "Every coach family", ""], ["wagon", "Wagons & Other Rolling Stock", "Freight, tankers & more", ""], ["route", "Routes & Maps", "Lay down the line", ""], ["tut", "Tutorials", "Get up and running", ""], ["news", "Latest News & Updates", "What's new", ""]];
+const copyTxt = (t) => navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(t) : new Promise((ok, no) => {
+  const e = document.createElement("textarea");
+  e.value = t;
+  e.style.cssText = "position:fixed;opacity:0";
+  document.body.appendChild(e);
+  e.select();
+  try {
+    document.execCommand("copy") ? ok() : no();
+  } catch (x) {
+    no(x);
+  }
+  e.remove();
+});
+function SignIn({ close }) {
+  return /* @__PURE__ */ React.createElement("div", { className: "fixed inset-0 z-[60] grid place-items-center p-4 bg-black/40", onClick: close }, /* @__PURE__ */ React.createElement("div", { role: "dialog", "aria-label": "Sign in", onClick: (e) => e.stopPropagation(), className: "w-full max-w-sm rounded-3xl bg-cream p-6 shadow-2xl" }, /* @__PURE__ */ React.createElement("div", { className: "flex justify-between items-start gap-3" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "text-xl font-semibold tracking-tight" }, AUTH ? "Your account" : "Sign in"), /* @__PURE__ */ React.createElement("p", { className: "text-sm text-ink/60 mt-1" }, AUTH ? "Save assets with the star on any card." : "Sign in with claude.ai to save favourite assets.")), /* @__PURE__ */ React.createElement("button", { onClick: close, "aria-label": "Close", className: "p-1" }, /* @__PURE__ */ React.createElement(I, { n: "x", s: 18 }))), AUTH ? /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "mt-5 flex items-center gap-3 bg-white rounded-2xl p-3 border border-black/[.07]" }, /* @__PURE__ */ React.createElement("span", { className: "relative w-10 h-10 rounded-full overflow-hidden bg-sage grid place-items-center text-forest font-semibold shrink-0" }, AUTH.name[0], AUTH.avatar && /* @__PURE__ */ React.createElement("img", { src: AUTH.avatar, alt: "", className: "absolute inset-0 w-full h-full object-cover", onError: (e) => {
+    e.currentTarget.style.display = "none";
+  } })), /* @__PURE__ */ React.createElement("div", { className: "min-w-0" }, /* @__PURE__ */ React.createElement("div", { className: "font-medium text-sm truncate" }, AUTH.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs text-ink/50" }, OWNER ? "Site owner" : "Member", " \xB7 claude.ai"))), /* @__PURE__ */ React.createElement("div", { className: "mt-4 flex flex-wrap gap-2" }, /* @__PURE__ */ React.createElement("a", { href: "#get-assets", onClick: close, className: "tap rounded-full border border-black/15 px-4 py-2 text-xs font-medium" }, "Saved assets (", SAVED.size, ")"), OWNER && /* @__PURE__ */ React.createElement(Bt, { on: () => {
+    close();
+    openAdmin();
+  } }, "Open site editor"))) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("a", { href: "https://claude.ai/login", target: "_blank", rel: "noopener noreferrer", className: "tap mt-5 w-full rounded-full bg-ink text-cream text-sm font-medium py-3 hover:bg-forest transition" }, "Continue with claude.ai"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-ink/50 mt-3" }, "After signing in, come back to this page and refresh it. Whether sign-in is available depends on how this page is shared with you."))));
+}
+const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "asset";
+const upA = (id, p) => setDB({ ...DB, assets: DB.assets.map((x) => x.id === id ? { ...x, ...p } : x) });
+const inp = "w-full rounded-lg border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-forest mt-1";
+const F = ({ l, v, on, rows, opts }) => /* @__PURE__ */ React.createElement("label", { className: "block text-xs text-ink/60 mb-3" }, l, opts ? /* @__PURE__ */ React.createElement("select", { value: v, onChange: (e) => on(e.target.value), className: inp }, opts.map((o) => /* @__PURE__ */ React.createElement("option", { key: o }, o))) : rows ? /* @__PURE__ */ React.createElement("textarea", { rows, value: v, onChange: (e) => on(e.target.value), className: inp }) : /* @__PURE__ */ React.createElement("input", { value: v, onChange: (e) => on(e.target.value), className: inp }));
+const shrink = (file, cb, mx = 900) => {
+  const r = new FileReader();
+  r.onload = () => {
+    const im = new Image();
+    im.onload = () => {
+      const s = Math.min(1, mx / im.width), c = document.createElement("canvas");
+      c.width = im.width * s;
+      c.height = im.height * s;
+      c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+      cb(c.toDataURL("image/jpeg", 0.8));
+    };
+    im.onerror = () => {
+      saveErr = "That image format is not supported. Try JPG or PNG.";
+      subs.forEach((f) => f());
+    };
+    im.src = r.result;
+  };
+  r.readAsDataURL(file);
+};
+const Bt = ({ on, children, d }) => /* @__PURE__ */ React.createElement("button", { onClick: on, className: "tap rounded-full px-3.5 py-1.5 text-xs font-medium transition " + (d ? "bg-[#b4402f] text-white" : "bg-ink text-cream hover:bg-forest") }, children);
+function Admin({ adm, setAdm }) {
+  const [cf, setCf] = useState("");
+  const [txt, setTxt] = useState("");
+  const [msg, setMsg] = useState("");
+  const [pm, setPm] = useState("");
+  const dirty = JSON.stringify(DB) !== PUB;
+  const pub = async () => {
+    setPm("Publishing\u2026");
+    try {
+      const art = await window.claude.use("artifact");
+      if (!art) throw new Error("x");
+      await art.publish(buildDoc());
+      setPm("Published.");
+    } catch (e) {
+      setPm("Publish failed" + (e && e.code ? ": " + e.code : "") + ". Your edits are kept as a private draft.");
+    }
+  };
+  const tab = adm.tab, sel = adm.sel, a = DB.assets.find((x) => x.id === sel), set = (p) => setAdm({ ...adm, ...p });
+  const two = (k, fn) => () => {
+    if (cf === k) {
+      fn();
+      setCf("");
+    } else setCf(k);
+  };
+  const addA = () => {
+    let id = slug("new-asset"), n = 1;
+    while (DB.assets.some((x) => x.id === id)) id = "new-asset-" + ++n;
+    setDB({ ...DB, assets: [...DB.assets, { id, name: "New asset", cat: "Locomotive", sub: "Meter Gauge Locomotives", gauge: "Meter", h: 120, plat: "PC + Android", ver: "v1.0", size: "", price: "Free", url: "", desc: "", imgs: [] }] });
+    set({ sel: id });
+  };
+  const listUp = (key, i, p) => setDB({ ...DB, [key]: DB[key].map((x, j) => j === i ? { ...x, ...p } : x) });
+  const S = (k, l, r) => /* @__PURE__ */ React.createElement(F, { key: k, l, v: DB.site[k], rows: r, on: (v) => setDB({ ...DB, site: { ...DB.site, [k]: v } }) });
+  return /* @__PURE__ */ React.createElement("div", { style: { paddingBottom: "env(safe-area-inset-bottom,0px)" }, role: "dialog", "aria-label": "Site editor", className: "fixed top-0 right-0 h-[100dvh] overscroll-contain z-50 w-full sm:w-[440px] bg-cream shadow-[-20px_0_60px_rgba(0,0,0,.25)] flex flex-col" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between px-5 py-4 border-b border-black/10" }, /* @__PURE__ */ React.createElement("div", { className: "font-semibold" }, "Site editor"), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(Bt, { on: pub }, "Publish to everyone"), /* @__PURE__ */ React.createElement("button", { onClick: () => setAdm({ o: 0 }), "aria-label": "Close", className: "p-1" }, /* @__PURE__ */ React.createElement(I, { n: "x", s: 20 })))), (dirty || pm) && /* @__PURE__ */ React.createElement("div", { className: "px-5 py-2 text-xs bg-[#eef2e4] text-forest" }, pm || "Unpublished changes: only you can see them until you publish."), /* @__PURE__ */ React.createElement("div", { className: "flex gap-1.5 px-5 py-3 overflow-x-auto border-b border-black/10" }, ["Assets", "Cover art", "Tutorials", "News", "Site text", "Section titles", "Text colours", "Background", "Data"].map((t) => /* @__PURE__ */ React.createElement("button", { key: t, onClick: () => set({ tab: t }), className: `tap shrink-0 px-3 py-1.5 rounded-full text-xs ${tab === t ? "bg-forest text-cream" : "bg-white border border-black/10"}` }, t))), /* @__PURE__ */ React.createElement("div", { className: "flex-1 overflow-y-auto px-5 py-4" }, saveErr && /* @__PURE__ */ React.createElement("div", { className: "mb-3 text-xs text-[#b4402f]" }, saveErr), tab === "Assets" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "flex flex-wrap gap-1.5 mb-4" }, DB.assets.map((x) => /* @__PURE__ */ React.createElement("button", { key: x.id, onClick: () => set({ sel: x.id }), className: `px-2.5 py-1 rounded-lg text-xs ${sel === x.id ? "bg-forest text-cream" : "bg-white border border-black/10"}` }, x.name)), /* @__PURE__ */ React.createElement(Bt, { on: addA }, "+ Add asset")), a ? /* @__PURE__ */ React.createElement("div", { key: a.id }, /* @__PURE__ */ React.createElement("div", { className: "rounded-xl overflow-hidden aspect-[5/3] mb-2" }, /* @__PURE__ */ React.createElement(Pic, { a, className: "w-full h-full" })), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-ink/55 mb-4" }, "Every asset has its own cover. Upload images below, or change this asset's drawn cover shape and colours."), /* @__PURE__ */ React.createElement(F, { l: "Name", v: a.name, on: (v) => upA(a.id, { name: v }) }), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-2 gap-3" }, /* @__PURE__ */ React.createElement(F, { l: "Type", v: a.cat, opts: ["Locomotive", "Coach", "Wagon", "Route"], on: (v) => upA(a.id, { cat: v }) }), /* @__PURE__ */ React.createElement(F, { l: "Gauge", v: a.gauge, opts: ["Meter", "Broad", "Both"], on: (v) => upA(a.id, { gauge: v }) })), a.cat === "Locomotive" && /* @__PURE__ */ React.createElement(F, { l: "Drawn cover: locomotive shape", v: ["Classic", "Long hood", "Double cab"][a.style || 0], opts: ["Classic", "Long hood", "Double cab"], on: (v) => upA(a.id, { style: ["Classic", "Long hood", "Double cab"].indexOf(v) }) }), /* @__PURE__ */ React.createElement(F, { l: "Sub-category", v: a.sub, on: (v) => upA(a.id, { sub: v }) }), /* @__PURE__ */ React.createElement(F, { l: "Simulator compatibility", v: a.plat, on: (v) => upA(a.id, { plat: v }) }), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-2 gap-3" }, /* @__PURE__ */ React.createElement(F, { l: "Version", v: a.ver, on: (v) => upA(a.id, { ver: v }) }), /* @__PURE__ */ React.createElement(F, { l: "File size", v: a.size, on: (v) => upA(a.id, { size: v }) })), /* @__PURE__ */ React.createElement(F, { l: "Free / Paid label", v: a.price, on: (v) => upA(a.id, { price: v }) }), /* @__PURE__ */ React.createElement(F, { l: "Download URL", v: a.url, on: (v) => upA(a.id, { url: v }) }), /* @__PURE__ */ React.createElement(F, { l: "Description", v: a.desc, rows: 4, on: (v) => upA(a.id, { desc: v }) }), /* @__PURE__ */ React.createElement("label", { className: "block text-xs text-ink/60 mb-3" }, "Placeholder art colour", /* @__PURE__ */ React.createElement("input", { type: "range", min: "0", max: "360", value: a.h, onChange: (e) => upA(a.id, { h: +e.target.value }), className: "w-full" })), /* @__PURE__ */ React.createElement("div", { className: "mb-4" }, /* @__PURE__ */ React.createElement("div", { className: "text-xs text-ink/60 mb-2" }, "Cover art colours (used when no image is uploaded)"), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-4 gap-2" }, [["body", "Train"], ["sky", "Sky"], ["hills", "Hills"], ["ground", "Ground"]].map(([k, l]) => /* @__PURE__ */ React.createElement("label", { key: k, className: "text-[11px] text-ink/60 text-center" }, l, /* @__PURE__ */ React.createElement("input", { type: "color", value: a.art && a.art[k] || eff(a, k), onChange: (e) => upA(a.id, { art: { ...a.art, [k]: e.target.value } }), className: "w-full h-9 rounded-lg border border-black/15 bg-white p-0.5" })))), /* @__PURE__ */ React.createElement("div", { className: "mt-2" }, /* @__PURE__ */ React.createElement(Bt, { on: () => upA(a.id, { art: {} }) }, "Automatic colours"))), /* @__PURE__ */ React.createElement("div", { className: "text-xs text-ink/60 mb-2" }, "Images (first is the card thumbnail)"), /* @__PURE__ */ React.createElement("div", { className: "flex flex-wrap gap-2 mb-2" }, (a.imgs || []).map((m, i) => /* @__PURE__ */ React.createElement("div", { key: i, className: "relative" }, /* @__PURE__ */ React.createElement("img", { src: m, alt: "", className: "w-20 h-14 object-cover rounded-lg" }), /* @__PURE__ */ React.createElement("button", { onClick: () => upA(a.id, { imgs: a.imgs.filter((_, j) => j !== i) }), className: "absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-ink text-cream text-[10px]", "aria-label": "Remove image" }, "\xD7")))), /* @__PURE__ */ React.createElement("input", { type: "file", accept: "image/*", multiple: true, className: "text-xs mb-4", onChange: (e) => {
+    [...e.target.files].forEach((f) => shrink(f, (d) => {
+      const c = DB.assets.find((x) => x.id === a.id);
+      upA(a.id, { imgs: [...c.imgs || [], d] });
+    }));
+    e.target.value = "";
+  } }), /* @__PURE__ */ React.createElement("div", { className: "flex gap-2 mb-2" }, /* @__PURE__ */ React.createElement("a", { href: "#asset-" + a.id, className: "rounded-full px-3.5 py-1.5 text-xs border border-black/15" }, "Open page"), /* @__PURE__ */ React.createElement(Bt, { d: true, on: two("del" + a.id, () => {
+    setDB({ ...DB, assets: DB.assets.filter((x) => x.id !== a.id) });
+    set({ sel: null });
+  }) }, cf === "del" + a.id ? "Click again to delete" : "Delete asset"))) : /* @__PURE__ */ React.createElement("div", { className: "text-sm text-ink/50" }, "Select an asset to edit, or add a new one.")), tab === "Cover art" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("p", { className: "text-xs text-ink/60 mb-3" }, "Set the default cover for every asset of a type. An asset's own images or colours (in the Assets tab) take priority."), ["Locomotive", "Coach", "Wagon", "Route"].map((ty) => {
+    const fake = { cat: ty, h: 120, name: ty, imgs: [] }, ta = (DB.site.typeArt || {})[ty] || {}, upT = (p) => setDB({ ...DB, site: { ...DB.site, typeArt: { ...DB.site.typeArt, [ty]: { ...ta, ...p } } } }), ti = (DB.site.typeImg || {})[ty];
+    return /* @__PURE__ */ React.createElement("div", { key: ty, className: "bg-white/70 rounded-xl border border-black/[.07] p-3 mb-4" }, /* @__PURE__ */ React.createElement("div", { className: "font-semibold text-sm mb-2" }, ty === "Route" ? "Routes" : ty + "s"), /* @__PURE__ */ React.createElement("div", { className: "rounded-lg overflow-hidden aspect-[5/3] mb-3" }, /* @__PURE__ */ React.createElement(Pic, { a: fake, className: "w-full h-full" })), /* @__PURE__ */ React.createElement("div", { className: "text-xs text-ink/60 mb-1" }, "Default cover image"), /* @__PURE__ */ React.createElement("input", { type: "file", accept: "image/*", className: "text-xs", onChange: (e) => {
+      const f = e.target.files[0];
+      if (f) shrink(f, (d) => setDB({ ...DB, site: { ...DB.site, typeImg: { ...DB.site.typeImg, [ty]: d } } }), 1200);
+      e.target.value = "";
+    } }), ti && /* @__PURE__ */ React.createElement("div", { className: "mt-2" }, /* @__PURE__ */ React.createElement(Bt, { d: true, on: () => setDB({ ...DB, site: { ...DB.site, typeImg: { ...DB.site.typeImg, [ty]: "" } } }) }, "Remove image")), /* @__PURE__ */ React.createElement("div", { className: "text-xs text-ink/60 mt-3 mb-2" }, "Or change the drawn cover colours"), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-4 gap-2" }, [["body", "Train"], ["sky", "Sky"], ["hills", "Hills"], ["ground", "Ground"]].map(([k, l]) => /* @__PURE__ */ React.createElement("label", { key: k, className: "text-[11px] text-ink/60 text-center" }, l, /* @__PURE__ */ React.createElement("input", { type: "color", value: ta[k] || defCol(fake)[k], onChange: (e) => upT({ [k]: e.target.value }), className: "w-full h-9 rounded-lg border border-black/15 bg-white p-0.5" })))), /* @__PURE__ */ React.createElement("div", { className: "mt-2" }, /* @__PURE__ */ React.createElement(Bt, { on: () => setDB({ ...DB, site: { ...DB.site, typeArt: { ...DB.site.typeArt, [ty]: {} } } }) }, "Automatic colours")));
+  })), (tab === "Tutorials" || tab === "News") && (() => {
+    const key = tab === "News" ? "news" : "tuts";
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, DB[key].map((x, i) => /* @__PURE__ */ React.createElement("div", { key: i, className: "bg-white/70 rounded-xl border border-black/[.07] p-3 mb-3" }, key === "tuts" ? /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(F, { l: "Title", v: x.t, on: (v) => listUp(key, i, { t: v }) }), /* @__PURE__ */ React.createElement(F, { l: "Text", v: x.d, rows: 2, on: (v) => listUp(key, i, { d: v }) })) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(F, { l: "Label", v: x.k, on: (v) => listUp(key, i, { k: v }) }), /* @__PURE__ */ React.createElement(F, { l: "Headline", v: x.t, on: (v) => listUp(key, i, { t: v }) }), /* @__PURE__ */ React.createElement(F, { l: "Date", v: x.date, on: (v) => listUp(key, i, { date: v }) })), /* @__PURE__ */ React.createElement(Bt, { d: true, on: two(key + i, () => setDB({ ...DB, [key]: DB[key].filter((_, j) => j !== i) })) }, cf === key + i ? "Click again" : "Delete"))), /* @__PURE__ */ React.createElement(Bt, { on: () => setDB({ ...DB, [key]: [...DB[key], key === "tuts" ? { t: "New tutorial", d: "" } : { k: "Announcement", t: "New headline", date: "" }] }) }, "+ Add"));
+  })(), tab === "Site text" && /* @__PURE__ */ React.createElement(React.Fragment, null, [["brand", "Brand name"], ["eyebrow", "Hero eyebrow"], ["h1a", "Headline line 1"], ["h1b", "Headline line 2"], ["desc", "Hero description", 3], ["aboutTitle", "About title"], ["about", "About text", 3], ["foot", "Footer blurb", 2], ["s1", "Social link 1"], ["s2", "Social link 2"], ["s3", "Social link 3"], ["credits", "Developer credits"], ["copy", "Copyright"]].map(([k, l, r]) => S(k, l, r))), tab === "Background" && (() => {
+    const st = DB.site, up = (p) => setDB({ ...DB, site: { ...DB.site, ...p } }), pick = (k, x) => (e) => {
+      const f = e.target.files[0];
+      if (f) shrink(f, (d) => up({ [k]: d, ...x }), 1600);
+      e.target.value = "";
+    };
+    const Sw = ({ l, k, list }) => /* @__PURE__ */ React.createElement("div", { className: "mb-5" }, /* @__PURE__ */ React.createElement("div", { className: "text-xs text-ink/60 mb-2" }, l), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 flex-wrap" }, /* @__PURE__ */ React.createElement("input", { type: "color", "aria-label": l, value: st[k], onChange: (e) => up({ [k]: e.target.value }), className: "w-10 h-10 rounded-lg border border-black/15 bg-white p-0.5" }), list.map(([n, c]) => /* @__PURE__ */ React.createElement("button", { key: n, onClick: () => up({ [k]: c }), className: "flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-black/10 text-xs" }, /* @__PURE__ */ React.createElement("i", { className: "w-3 h-3 rounded-full border border-black/20", style: { background: c } }), n))));
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Sw, { l: "Page background colour", k: "bgColor", list: [["Sage", "#b9c4a9"], ["Sand", "#d8cfb8"], ["Mist", "#c9d3d6"], ["Olive", "#9aa68a"], ["Charcoal", "#2b2f2b"]] }), /* @__PURE__ */ React.createElement(Sw, { l: "Website container colour", k: "boxColor", list: [["Cream", "#f4f0e6"], ["White", "#ffffff"], ["Linen", "#efe9dc"], ["Stone", "#e4e2da"]] }), /* @__PURE__ */ React.createElement(F, { l: "Page texture (dots)", v: st.texture, opts: ["on", "off"], on: (v) => up({ texture: v }) }), /* @__PURE__ */ React.createElement("div", { className: "mb-5" }, /* @__PURE__ */ React.createElement("div", { className: "text-xs text-ink/60 mb-1" }, "Page background image (replaces colour and texture)"), /* @__PURE__ */ React.createElement("input", { type: "file", accept: "image/*", className: "text-xs", onChange: pick("pageImg", {}) }), st.pageImg && /* @__PURE__ */ React.createElement("div", { className: "mt-2 flex items-center gap-2" }, /* @__PURE__ */ React.createElement("img", { src: st.pageImg, alt: "", className: "w-20 h-12 object-cover rounded-lg" }), /* @__PURE__ */ React.createElement(Bt, { d: true, on: () => up({ pageImg: "" }) }, "Remove"))), /* @__PURE__ */ React.createElement(F, { l: "Hero scenery behind the dashboard", v: st.scenery, opts: ["art", "image", "none"], on: (v) => up({ scenery: v }) }), /* @__PURE__ */ React.createElement("div", { className: "mb-5" }, /* @__PURE__ */ React.createElement("div", { className: "text-xs text-ink/60 mb-1" }, 'Scenery image (used when scenery is "image"; it fades out toward the bottom)'), /* @__PURE__ */ React.createElement("input", { type: "file", accept: "image/*", className: "text-xs", onChange: pick("sceneImg", { scenery: "image" }) }), st.sceneImg && /* @__PURE__ */ React.createElement("div", { className: "mt-2 flex items-center gap-2" }, /* @__PURE__ */ React.createElement("img", { src: st.sceneImg, alt: "", className: "w-20 h-12 object-cover rounded-lg" }), /* @__PURE__ */ React.createElement(Bt, { d: true, on: () => up({ sceneImg: "", scenery: "art" }) }, "Remove"))), /* @__PURE__ */ React.createElement(Bt, { on: () => up({ bgColor: S0.bgColor, boxColor: S0.boxColor, texture: "on", scenery: "art", pageImg: "", sceneImg: "" }) }, "Restore original look"));
+  })(), tab === "Section titles" && /* @__PURE__ */ React.createElement(React.Fragment, null, SECS.map(([id, k0, t0, s0]) => {
+    var _a, _b, _c;
+    const o = (DB.site.sec || {})[id] || {}, up = (p) => setDB({ ...DB, site: { ...DB.site, sec: { ...DB.site.sec, [id]: { ...o, ...p } } } });
+    return /* @__PURE__ */ React.createElement("div", { key: id, className: "bg-white/70 rounded-xl border border-black/[.07] p-3 mb-3" }, /* @__PURE__ */ React.createElement(F, { l: "Small label above the title", v: (_a = o.k) != null ? _a : k0, on: (v) => up({ k: v }) }), /* @__PURE__ */ React.createElement(F, { l: "Title", v: (_b = o.t) != null ? _b : t0, on: (v) => up({ t: v }) }), /* @__PURE__ */ React.createElement(F, { l: "Subtitle (leave empty to hide)", v: (_c = o.s) != null ? _c : s0, on: (v) => up({ s: v }) }));
+  }), /* @__PURE__ */ React.createElement(Bt, { on: () => setDB({ ...DB, site: { ...DB.site, sec: {} } }) }, "Restore original titles")), tab === "Text colours" && (() => {
+    const st = DB.site, up = (p) => setDB({ ...DB, site: { ...DB.site, ...p } }), L = [["Charcoal", "#1a1d1a"], ["Forest", "#1f3a2c"], ["Slate", "#475049"], ["Grey", "#8a8d86"], ["White", "#ffffff"], ["Cream", "#f4f0e6"]];
+    const C = ([k, l]) => /* @__PURE__ */ React.createElement("div", { key: k, className: "mb-5" }, /* @__PURE__ */ React.createElement("div", { className: "text-xs text-ink/60 mb-2" }, l), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 flex-wrap" }, /* @__PURE__ */ React.createElement("input", { type: "color", "aria-label": l, value: st[k], onChange: (e) => up({ [k]: e.target.value }), className: "w-10 h-10 rounded-lg border border-black/15 bg-white p-0.5" }), L.map(([n, c]) => /* @__PURE__ */ React.createElement("button", { key: n, onClick: () => up({ [k]: c }), className: "flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-black/10 text-xs" }, /* @__PURE__ */ React.createElement("i", { className: "w-3 h-3 rounded-full border border-black/20", style: { background: c } }), n))));
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, [["tH1", "Headline line 1 (muted)"], ["tH2", "Headline line 2 (bold)"], ["tHead", "Section and asset headings"], ["tBody", "Paragraph and description text"], ["tAccent", "Small labels and eyebrow text"]].map(C), /* @__PURE__ */ React.createElement(Bt, { on: () => up({ tH1: S0.tH1, tH2: S0.tH2, tHead: S0.tHead, tBody: S0.tBody, tAccent: S0.tAccent }) }, "Restore original text colours"));
+  })(), tab === "Data" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("p", { className: "text-xs text-ink/60 mb-3" }, "Your edits are a private draft until you press Publish to everyone. Copy the JSON to back it up, or paste a saved copy below and import it."), /* @__PURE__ */ React.createElement("div", { className: "flex gap-2 mb-3" }, /* @__PURE__ */ React.createElement(Bt, { on: () => {
+    copyTxt(JSON.stringify(DB)).then(() => setMsg("Copied."), () => setMsg("Copy failed. Select the box below."));
+  } }, "Copy all data"), /* @__PURE__ */ React.createElement(Bt, { d: true, on: two("reset", () => {
+    setDB(D0());
+    setMsg("Reset to defaults.");
+  }) }, cf === "reset" ? "Click again to reset" : "Reset to defaults")), /* @__PURE__ */ React.createElement("textarea", { rows: "8", value: txt, onChange: (e) => setTxt(e.target.value), placeholder: "Paste exported JSON here", className: inp }), /* @__PURE__ */ React.createElement("div", { className: "mt-2" }, /* @__PURE__ */ React.createElement(Bt, { on: () => {
+    try {
+      const x = JSON.parse(txt);
+      if (!x.assets) throw 0;
+      setDB({ ...D0(), ...x, site: { ...S0, ...x.site } });
+      setMsg("Imported.");
+    } catch (e) {
+      setMsg("That is not valid data.");
+    }
+  } }, "Import")), msg && /* @__PURE__ */ React.createElement("div", { className: "text-xs mt-2 text-forest" }, msg))));
+}
+ReactDOM.createRoot(document.getElementById("root")).render(/* @__PURE__ */ React.createElement(App, null));
+</script>
+</body>
+</html>
